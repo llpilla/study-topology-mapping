@@ -26,20 +26,24 @@ class ApplicationGraph:
     ValueError
         If the matrix contains NaN, negative values, or it is not square.
     """
-    def __init__(self, csv_file):
+    def __init__(self, csv_file=None):
         """Reads the application graph from a CSV file"""
-        self.affinity = np.genfromtxt(csv_file, delimiter=',')
-        # Integrity check
-        if np.isnan(self.affinity).any():
-            print(f"* The communication matrix from file {csv_file} contains NaN values.")
-            raise ValueError
-        if np.min(self.affinity) < 0.:
-            print(f"* The communication matrix from file {csv_file} contains negative values.")
-            raise ValueError
-        if self.affinity.shape[0] != self.affinity.shape[1]:
-            print(f"* The communication matrix from file {csv_file} is not square.")
-            raise ValueError
-        self.num_tasks = self.affinity.shape[0]
+        if csv_file != None:
+            self.affinity = np.genfromtxt(csv_file, delimiter=',')
+            # Integrity check
+            if np.isnan(self.affinity).any():
+                print(f"* The communication matrix from file {csv_file} contains NaN values.")
+                raise ValueError
+            if np.min(self.affinity) < 0.:
+                print(f"* The communication matrix from file {csv_file} contains negative values.")
+                raise ValueError
+            if self.affinity.shape[0] != self.affinity.shape[1]:
+                print(f"* The communication matrix from file {csv_file} is not square.")
+                raise ValueError
+            self.num_tasks = self.affinity.shape[0]
+        else:
+            self.num_tasks = 1
+            self.affinity = np.zeros([1])
 
     def get_affinity(self, source, dest):
         """Alternative method to get the affinity between two tasks
